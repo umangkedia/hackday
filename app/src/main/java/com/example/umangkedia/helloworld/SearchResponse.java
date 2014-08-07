@@ -1,18 +1,17 @@
 package com.example.umangkedia.helloworld;
 
+import java.util.List;
 import java.util.Map;
 
 public class SearchResponse {
 
-	Map<String, ProductInfo> product;
+    List<Object> results;
 
-	public Map<String, ProductInfo> getProduct() {
-		return product;
-	}
+    public List<Object> getResults() {
+        return results;
+    }
 
-	public void setProduct(Map<String, ProductInfo> product) {
-		this.product = product;
-	}
-	
-	
+    public void setResults(List<Object> results) {
+        this.results = results;
+    }
 }

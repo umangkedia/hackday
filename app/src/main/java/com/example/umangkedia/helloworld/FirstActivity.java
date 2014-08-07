@@ -1,6 +1,7 @@
 package com.example.umangkedia.helloworld;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,10 +21,9 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 
-public class FirstActivity extends Activity {
+public class FirstActivity extends Activity implements View.OnClickListener {
 
-    private EditText searchEditText;
-    private  Button searchButton;
+    private  Button mapButton;
 
     private RequestQueue mRequestQueue = null;
     private final String BASE_URL = "http://mobileapi.flipkart.net/2/discover/getSearch?store=search.flipkart.com&start=0&count=10&q=";
@@ -32,51 +32,8 @@ public class FirstActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
-        mRequestQueue = Volley.newRequestQueue(this);
-        searchEditText = (EditText) findViewById(R.id.searchText);
-        searchButton = (Button) findViewById(R.id.searchButton);
-
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Searching for " + searchEditText.getText(), Toast.LENGTH_SHORT).show();
-                doSearch(searchEditText.getText().toString());
-            }
-        });
-    }
-
-    private void doSearch(String searchText) {
-        try {
-            String encodedURL = URLEncoder.encode(searchText, "UTF-8");
-            doSearchRequest(encodedURL);
-        }
-
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void doSearchRequest(String encodedURL) {
-        SearchRequest searchRequest = new SearchRequest(Request.Method.GET, BASE_URL + encodedURL, new Response.Listener<ObjectResponse>() {
-            @Override
-            public void onResponse(ObjectResponse objectResponse) {
-                Log.d("UmangLog", "Success");
-                Map<String, ProductInfo> products = objectResponse.getResponse().getProduct();
-                Log.d("UmangLog", "" + products.size());
-
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("UmangLog", "Error");
-
-                    }
-                }
-        );
-        mRequestQueue.add(searchRequest);
-
+        mapButton = (Button) findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(this);
     }
 
 
@@ -97,5 +54,33 @@ public class FirstActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        if (view.getId() == R.id.mapButton) {
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivityForResult(intent, 1);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1)
+        {
+            //fetch value from intent
+            double latitude = data.getDoubleExtra(MapActivity.LATITUDE, 0);
+            double longitude = data.getDoubleExtra(MapActivity.LONGITUDE, 0);
+
+            // Set the message string in textView
+            Toast.makeText(FirstActivity.this, "Lat: " + latitude + " "  + "Long: " + longitude,
+                    Toast.LENGTH_LONG).show();
+
+        }
     }
 }
