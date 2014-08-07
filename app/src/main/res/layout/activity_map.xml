@@ -16,18 +16,15 @@
         <EditText
             android:layout_width="200px"
             android:layout_height="wrap_content"
-            android:id="@+id/editText4"
+            android:id="@+id/searchText"
             android:layout_weight="1" />
 
 
         <Button
             android:layout_width="200px"
             android:layout_height="wrap_content"
-            android:text="Search Location"
+            android:text="Search"
             android:id="@+id/searchLocation"/>
-
-
-
     </LinearLayout>
 
 
