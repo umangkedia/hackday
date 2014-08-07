@@ -9,13 +9,27 @@
     tools:context="com.example.umangkedia.helloworld.MapActivity"
     android:orientation="vertical">
 
-
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Location"
-        android:id="@+id/searchLocation"
-        android:layout_gravity="center_horizontal" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="200px"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText4"
+            android:layout_weight="1" />
+
+
+        <Button
+            android:layout_width="200px"
+            android:layout_height="wrap_content"
+            android:text="Search Location"
+            android:id="@+id/searchLocation"/>
+
+
+
+    </LinearLayout>
+
 
     <fragment
         android:id="@+id/map"
