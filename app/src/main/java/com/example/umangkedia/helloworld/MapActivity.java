@@ -1,7 +1,9 @@
 package com.example.umangkedia.helloworld;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,9 +31,18 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +59,16 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
     public static final String LONGITUDE = "LONGITUDE";
     Button setButton;
     Button searchButton;
-
-    //Using volley .. Yay!!
-    private RequestQueue mRequestQueue = null;
+    MarkerOptions marker;
 
     // Creating HTTP client
     HttpClient httpClient;
-    public static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json?";
+    public static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBrzWx3eYxgjWD8qywQW3TO4QHpnvpfvMg&";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        mRequestQueue = Volley.newRequestQueue(this);
 
         httpClient = new DefaultHttpClient();
 
@@ -99,7 +107,7 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
     }
 
     private void initializeMarker() {
-        MarkerOptions marker = new MarkerOptions()
+        marker = new MarkerOptions()
                 .position(new LatLng(currentLatitude, currentLongitude))
                 .title("Hello Flipsters")
                 .draggable(true);
@@ -135,6 +143,7 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
 
         Intent intentMessage = new Intent();
 
+        Log.d("MapActivity: Longitude and latitude", String.valueOf(position.latitude) + String.valueOf(position.longitude));
         intentMessage.putExtra(LATITUDE, position.latitude);
         intentMessage.putExtra(LONGITUDE, position.longitude);
         setResult(1, intentMessage);
@@ -153,41 +162,24 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
 
     private void doSearch() {
         String searchText = "address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&sensor=true_or_false";
-        try {
-            String encodedURL = URLEncoder.encode(searchText, "UTF-8");
-            doSearchRequest(encodedURL);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    private void doSearchRequest(String encodedURL) {
-        /*
-        SearchRequest searchRequest = new SearchRequest(Request.Method.GET, GEOCODE_URL + encodedURL, new Response.Listener<ObjectResponse>() {
+        DownloadTask downloadTask = new DownloadTask() {
             @Override
-            public void onResponse(ObjectResponse objectResponse) {
-                Log.d("MapActivity", objectResponse.toString());
-                List<Object> results = objectResponse.getResponse().getResults();
-                Map<String, Object> result = (HashMap<String, Object>)results.get(0);
-                Map<String, Object> geometry = (Map<String, Object>) result.get("geometry");
-                Map<String, Object> location = (Map<String, Object>) geometry.get("location");
+            public void receiveData(double latitude, double longitude) {
+                currentLatitude = latitude;
+                currentLongitude = longitude;
+                if (marker != null)
+                    googleMap.clear();
 
-                Log.d("MapActivity", (String)location.get("lat"));
-
+                LatLng latLng = new LatLng(latitude, longitude);
+                marker = new MarkerOptions().position(latLng);
+                Marker newMarker = googleMap.addMarker(marker);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                onMarkerDragEnd(newMarker);
 
             }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("MapActivity", "Error");
-
-                    }
-                }
-        );
-        mRequestQueue.add(searchRequest);*/
+        };
+        downloadTask.execute(GEOCODE_URL + searchText);
     }
 
     @Override
@@ -214,5 +206,4 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
