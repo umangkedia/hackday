@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListener, View.OnClickListener {
 
     private GoogleMap googleMap;
@@ -136,7 +139,12 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
         }
         else if (view.getId() == R.id.searchLocation) {
 //            String searchBox = "address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&sensor=true_or_false";
-            String searchText =  searchBox.getText().toString();
+            String searchText = null;
+            try {
+                searchText = URLEncoder.encode(searchBox.getText().toString(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             if (searchText.trim() != "")
                 doSearch(GEOCODE_URL + "address=" + searchText + "&sensor=true_or_false");
 
