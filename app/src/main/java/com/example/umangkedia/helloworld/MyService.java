@@ -178,7 +178,7 @@ public class MyService extends Service {
     }
 
     class MyThread extends Thread{
-        static final long DELAY = 3000;
+        static final long DELAY = 30000;
         @Override
         public void run(){
             while(isRunning){
@@ -202,25 +202,25 @@ public class MyService extends Service {
     private void showNotification(String task_id, String description, String latitude, String longitude) {
         String msg = "Can you " + description + "?";
 
-        Intent notificationIntent = new Intent(getApplicationContext(), FirstActivity.class);
+        Intent notificationIntent = new Intent(getApplicationContext(), BuyActivity.class);
         notificationIntent.putExtra("question", msg);
         notificationIntent.putExtra("task_id", task_id);
         notificationIntent.putExtra("latitude", latitude);
         notificationIntent.putExtra("longitude", longitude);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
-        Notification n  = new Notification.Builder(this)
-                .setContentTitle("Task to complete")
-                .setContentText(msg)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build();
+            Notification n = new Notification.Builder(this)
+                    .setContentTitle("Task to complete")
+                    .setContentText(msg)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .build();
 
-        notificationManager.notify(0, n);
-    }
+            notificationManager.notify(0, n);
+        }
 
     LocationListener gpsListener = new LocationListener() {
         public void onLocationChanged(Location location) {

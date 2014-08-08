@@ -39,6 +39,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity
+            android:name=".BuyActivity"
+            android:label="@string/title_activity_buy" >
+        </activity>
     </application>
 
     <!-- Required OpenGL ES 2.0. for Maps V2 -->

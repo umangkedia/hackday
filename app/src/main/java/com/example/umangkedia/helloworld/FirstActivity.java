@@ -45,46 +45,8 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         mapButton = (Button) findViewById(R.id.mapButton);
         mapButton.setOnClickListener(this);
         startService(new Intent(FirstActivity.this, MyService.class));
-        onNewIntent(getIntent());
-
     }
 
-    @Override
-    public void onNewIntent(Intent newIntent) {
-        this.setIntent(newIntent);
-        Log.d(TAG, "Activity Launched through Notification");
-
-        String message = getIntent().getStringExtra("question");
-        task_ids = getIntent().getStringExtra("task_id");
-        String latitude = getIntent().getStringExtra("latitude");
-        String longitude = getIntent().getStringExtra("longitude");
-        if (message != null) {
-
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case DialogInterface.BUTTON_POSITIVE:
-                            //Yes button clicked
-                            Log.d("Accepted task", task_ids);
-                            markCompleted(task_ids);
-                            break;
-
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            //No button clicked, don't do anything
-                            Log.d("Rejected task", task_ids);
-                            break;
-                    }
-                }
-            };
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(message).setPositiveButton("Yes", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show();
-        }
-
-        // Now getIntent() returns the updated Intent
-    }
 
     private void markCompleted(String task) {
          doBuyItem(task);
