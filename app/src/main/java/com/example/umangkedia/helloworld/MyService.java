@@ -28,7 +28,7 @@ public class MyService extends Service {
 
     private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 10 ;
     private static String TAG = "MyService";
-    private MyThread mythread;
+
     public boolean isRunning = false;
     NotificationManager notificationManager;
     Location curLocation;
@@ -58,7 +58,6 @@ public class MyService extends Service {
         Log.d(TAG, "onCreate");
         notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         //showNotification("Startup","dummy message");
-        mythread  = new MyThread();
         curLocation = getBestLocation();
 
         if (curLocation == null)
@@ -74,12 +73,7 @@ public class MyService extends Service {
 
     @Override
     public synchronized void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-        if(!isRunning){
-            mythread.interrupt();
-            mythread.stop();
-        }
+
     }
 
     @Override
@@ -88,7 +82,6 @@ public class MyService extends Service {
 
         Log.d(TAG, "onStart");
         if(!isRunning){
-            mythread.start();
             isRunning = true;
         }
         return super.onStartCommand(intent, flags, startId);
@@ -159,7 +152,7 @@ public class MyService extends Service {
             if (curLocation != null)
                 doCheckPositionRequest(String.valueOf(curLocation.getLatitude()), String.valueOf(curLocation.getLongitude()));
 
-            handler.postDelayed(GpsFinder,40000);// register again to start after 40 seconds...
+            handler.postDelayed(GpsFinder,60000);// register again to start after 40 seconds...
         }
     };
 
@@ -179,37 +172,22 @@ public class MyService extends Service {
         }
     }
 
-    class MyThread extends Thread{
-        static final long DELAY = 30000;
-        @Override
-        public void run(){
-            while(isRunning){
-                Log.d(TAG,"Running");
-                try {
-                    readWebPage();
-                    Thread.sleep(DELAY);
-                } catch (InterruptedException e) {
-                    isRunning = false;
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
 
     /**
      * Show a notification while this service is running.
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showNotification(String task_id, String description, String latitude, String longitude) {
-        String msg = "Can you " + description + "?";
 
-        Intent notificationIntent = new Intent(getApplicationContext(), BuyActivity.class);
-        notificationIntent.putExtra("question", msg);
-        notificationIntent.putExtra("task_id", task_id);
-        notificationIntent.putExtra("latitude", latitude);
-        notificationIntent.putExtra("longitude", longitude);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (description != null && description.trim().length() > 0) {
+            String msg = "Can you " + description + "?";
+
+            Intent notificationIntent = new Intent(getApplicationContext(), BuyActivity.class);
+            notificationIntent.putExtra("question", msg);
+            notificationIntent.putExtra("task_id", task_id);
+            notificationIntent.putExtra("latitude", latitude);
+            notificationIntent.putExtra("longitude", longitude);
+            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
@@ -223,6 +201,7 @@ public class MyService extends Service {
 
             notificationManager.notify(0, n);
         }
+    }
 
     LocationListener gpsListener = new LocationListener() {
         public void onLocationChanged(Location location) {
