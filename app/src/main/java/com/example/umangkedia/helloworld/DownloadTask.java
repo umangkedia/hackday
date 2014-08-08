@@ -87,7 +87,7 @@ public abstract class DownloadTask extends AsyncTask<String, Void, String> imple
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
         try{
-            URL url = new URL(GEOCODE_URL + encodedURL);
+            URL url = new URL(encodedURL);
 
             // Creating an http connection to communicate with url
             urlConnection = (HttpURLConnection) url.openConnection();
