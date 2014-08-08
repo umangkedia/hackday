@@ -23,6 +23,7 @@ public class TaskListView extends ListActivity {
     private final String TASK_STRING = "description";
     private final String LATITUDE = "latitude";
     private final String LONGITUDE = "longitude";
+    private final String STATUS = "done";
     private SimpleAdapter sa;
     //private String android_id = Secure.getString(getApplicationContext().getContentResolver(),
     //        Secure.ANDROID_ID);
@@ -51,7 +52,7 @@ public class TaskListView extends ListActivity {
                 for (HashMap<String, String> item: task_list) {
                     HashMap<String, String> rowItem = new HashMap<String, String>();
                     rowItem.put("line1", item.get(TASK_STRING));
-                    rowItem.put("line2", "lat: " + item.get(LATITUDE) + " long: " + item.get(LONGITUDE));
+                    rowItem.put("line2", "lat: " + item.get(LATITUDE) + " long: " + item.get(LONGITUDE) + " Status: " + item.get(STATUS));
                     list.add(rowItem);
                 }
                 //finish();
@@ -61,6 +62,7 @@ public class TaskListView extends ListActivity {
         Log.d("URL is", GET_ITEMS_URL+ "?mobile_id=" + mobile_id);
         getItemsTask.execute(GET_ITEMS_URL+ "?mobile_id=" + mobile_id);
     }
+
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String item = (String) getListAdapter().getItem(position);
