@@ -3,7 +3,7 @@ package com.example.umangkedia.helloworld;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.*;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +19,8 @@ import com.android.volley.toolbox.Volley;
 
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class FirstActivity extends Activity implements View.OnClickListener {
@@ -27,6 +29,10 @@ public class FirstActivity extends Activity implements View.OnClickListener {
 
     private RequestQueue mRequestQueue = null;
     private final String BASE_URL = "http://mobileapi.flipkart.net/2/discover/getSearch?store=search.flipkart.com&start=0&count=10&q=";
+    private final String CHECK_POSITION_URL = "http://172.17.89.113:25500/shopping_item/check";
+    private final String BUY_ITEM_URL = "http://172.17.89.113:25500//shopping_item/close";
+    private final String GET_ITEMS_URL = "http://172.17.89.113:25500//shopping_item/fetch";
+    private final String CREATE_GEO_FENCING_URL = "http://172.17.89.113:25500//shopping_item/create";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +62,57 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    private void doCheckPositionRequest(String latitude, String longitude){
+        CheckPositionTask checkPositionTask = new CheckPositionTask() {
+            @Override
+            public void receiveData(String mobile_id, String task_id, String description, String latitude, String longitude, String done, String distance) {
+               Log.d("Final :" , mobile_id + ";" + task_id + ";" + description + ";" + latitude + ";" + longitude + ";" + done + ";" + distance);
+            }
+        };
+        checkPositionTask.execute(CHECK_POSITION_URL + "?latitude=" + latitude + "&longitude=" + longitude);
+    }
+
+    private void doBuyItem(String task_id){
+        BuyItemTask buyItemTask = new BuyItemTask() {
+            @Override
+            public void receiveData(String message) {
+                if ( message != null )
+                    Log.d("Final :" , message);
+                else
+                    Log.d("Final :" , "null" );
+            }
+        };
+        buyItemTask.execute(BUY_ITEM_URL + "?task_id=" + task_id);
+    }
+
+    private void doGetItems(String mobile_id) {
+        GetItemsTask getItemsTask = new GetItemsTask() {
+            @Override
+            public void receiveData(ArrayList<HashMap<String, String>> task_list) {
+                Log.d("GetItems","Nothing to show");
+            }
+        };
+        getItemsTask.execute(GET_ITEMS_URL+ "?mobile_id=" + mobile_id);
+    }
+
+    private void doCreateGeoFencing(String mobile_id, String task_id, String description, String latitude, String longitude){
+        CreateGeoFencingTask createGeoFencingTask = new CreateGeoFencingTask() {
+            @Override
+            public void receiveData(String message) {
+                Log.d("CreateGeoFencing", message);
+            }
+        };
+        createGeoFencingTask.execute(CREATE_GEO_FENCING_URL + "?mobile_id=" + mobile_id
+        + "&task_id=" + task_id + "&latitude=" + latitude + "&longitude=" + longitude
+                + "&description=" + description);
+    }
+
+        @Override
     public void onClick(View view) {
+        //doCheckPositionRequest("1","2");
+        //doBuyItem("task_id");
+        //doGetItems("mobile_id");
+        //doCreateGeoFencing("mobile_id","task_id12", "description", "12.21","21.12");
 
         if (view.getId() == R.id.mapButton) {
             Intent intent = new Intent(this, MapActivity.class);
