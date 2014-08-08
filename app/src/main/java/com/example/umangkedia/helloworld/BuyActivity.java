@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,7 +35,7 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
     Button accept;
     Button reject;
     MarkerOptions marker;
-    EditText searchBox;
+    TextView question;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
         reject = (Button) findViewById(R.id.no);
         reject.setOnClickListener(this);
 
-        searchBox = (EditText) findViewById(R.id.searchText);
+        question = (TextView) findViewById(R.id.question);
 
         try {
             // Loading map
@@ -63,9 +64,10 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
         this.setIntent(newIntent);
         Log.d("BuyActivity", "Activity Launched through Notification");
 
-        String message = getIntent().getStringExtra("MESSAGE");
-        double latitude = getIntent().getDoubleExtra("latitude", 0);
-        double longitude = getIntent().getDoubleExtra("longitude", 0);
+        String message = getIntent().getStringExtra("question");
+        question.setText(message);
+        double latitude = Double.parseDouble(getIntent().getStringExtra("latitude"));
+        double longitude = Double.parseDouble(getIntent().getStringExtra("longitude"));
 
         if (message != null) {
             initializeMarker(latitude, longitude);
@@ -78,7 +80,7 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
     private void initializeMap() {
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.map)).getMap();
+                    R.id.map2)).getMap();
 
             // check if map is created successfully or not
             if (googleMap == null) {
@@ -92,7 +94,7 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
     private void initializeMarker(double latitude, double longitude) {
         marker = new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .title("Hello Flipsters")
+                .title("Location")
                 .draggable(true);
 
         marker.icon(BitmapDescriptorFactory
@@ -100,13 +102,19 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
         googleMap.addMarker(marker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                new LatLng(currentLatitude, currentLongitude)).zoom(12).build();
+                new LatLng(currentLatitude, currentLongitude)).zoom(10).build();
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     @Override
     public void onClick(View view) {
+        if (view.getId() == R.id.yes) {
+
+        }
+        else if (view.getId() == R.id.no) {
+
+        }
 
     }
 
