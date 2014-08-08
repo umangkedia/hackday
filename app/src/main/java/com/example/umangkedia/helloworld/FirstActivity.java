@@ -54,7 +54,7 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         this.setIntent(newIntent);
         Log.d(TAG, "Activity Launched through Notification");
 
-        String message = getIntent().getStringExtra("MESSAGE");
+        String message = getIntent().getStringExtra("question");
 
         if (message != null) {
 
@@ -75,7 +75,7 @@ public class FirstActivity extends Activity implements View.OnClickListener {
             };
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+            builder.setMessage(message).setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
         }
 

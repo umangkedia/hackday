@@ -34,12 +34,28 @@ public class MyService extends Service {
     Location curLocation;
     public static boolean isService = true;
 
+    private final String CHECK_POSITION_URL = "http://172.17.89.113:25500/shopping_item/check";
+    private final String BUY_ITEM_URL = "http://172.17.89.113:25500//shopping_item/close";
+    private final String GET_ITEMS_URL = "http://172.17.89.113:25500//shopping_item/fetch";
+    private final String CREATE_GEO_FENCING_URL = "http://172.17.89.113:25500//shopping_item/create";
+
     private LocationManager locMan;
     private Boolean locationChanged;
     private Handler handler = new Handler();
 
     double latitude = 0;
     double longitude = 0;
+
+    private void doCheckPositionRequest(String latitude, String longitude){
+        CheckPositionTask checkPositionTask = new CheckPositionTask() {
+            @Override
+            public void receiveData(String mobile_id, String task_id, String description, String latitude, String longitude, String done, String distance) {
+                Log.d("CheckPosition Request :" , mobile_id + ";" + task_id + ";" + description + ";" + latitude + ";" + longitude + ";" + done + ";" + distance);
+                showNotification(task_id,description);
+            }
+        };
+        checkPositionTask.execute(CHECK_POSITION_URL + "?latitude=" + latitude + "&longitude=" + longitude);
+    }
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -51,14 +67,14 @@ public class MyService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
         notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        showNotification();
+        //showNotification("Startup","dummy message");
         mythread  = new MyThread();
-
         curLocation = getBestLocation();
 
         if (curLocation == null)
             Toast.makeText(getBaseContext(), "Unable to get your location", Toast.LENGTH_SHORT).show();
         else{
+            //doCheckPositionRequest(String.valueOf(curLocation.getLatitude()), String.valueOf(curLocation.getLongitude()));
             //Toast.makeText(getBaseContext(), curLocation.toString(), Toast.LENGTH_LONG).show();
         }
 
@@ -138,6 +154,8 @@ public class MyService extends Service {
 
             if(tempLoc!=null)
                 curLocation = tempLoc;
+            if (curLocation != null)
+                doCheckPositionRequest(String.valueOf(curLocation.getLatitude()), String.valueOf(curLocation.getLongitude()));
 
             handler.postDelayed(GpsFinder,40000);// register again to start after 40 seconds...
         }
@@ -160,7 +178,7 @@ public class MyService extends Service {
     }
 
     class MyThread extends Thread{
-        static final long DELAY = 30000;
+        static final long DELAY = 3000;
         @Override
         public void run(){
             while(isRunning){
@@ -181,11 +199,11 @@ public class MyService extends Service {
      * Show a notification while this service is running.
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private void showNotification() {
-        String msg = "Click to see the notification";
+    private void showNotification(String task_id, String description) {
+        String msg = "Can you " + description + "?";
 
         Intent notificationIntent = new Intent(getApplicationContext(), FirstActivity.class);
-        notificationIntent.putExtra("MESSAGE", msg);
+        notificationIntent.putExtra("question", msg);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
