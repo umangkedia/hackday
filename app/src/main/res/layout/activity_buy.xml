@@ -13,7 +13,8 @@
         android:id="@+id/map2"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="800px"/>
+        android:layout_height="match_parent"
+        android:layout_weight="0.1"/>
 
 
     <TextView
@@ -31,14 +32,16 @@
             android:layout_width="200px"
             android:layout_height="wrap_content"
             android:text="Accept"
-            android:id="@+id/yes"/>
+            android:id="@+id/yes"
+            android:layout_weight="0.5"/>
 
 
         <Button
             android:layout_width="200px"
             android:layout_height="wrap_content"
             android:text="Reject"
-            android:id="@+id/no"/>
+            android:id="@+id/no"
+            android:layout_weight="0.5"></Button>
     </LinearLayout>
 
 

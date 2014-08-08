@@ -96,13 +96,14 @@ public class MapActivity extends Activity implements GoogleMap.OnMarkerDragListe
 
         marker.icon(BitmapDescriptorFactory
                 .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-        googleMap.addMarker(marker);
+        Marker newMarker = googleMap.addMarker(marker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(
                 new LatLng(currentLatitude, currentLongitude)).zoom(10).build();
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         googleMap.setOnMarkerDragListener(this);
+        onMarkerDragEnd(newMarker);
 
     }
 

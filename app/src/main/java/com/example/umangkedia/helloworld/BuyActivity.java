@@ -110,7 +110,7 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
         googleMap.addMarker(marker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                new LatLng(currentLatitude, currentLongitude)).zoom(10).build();
+                new LatLng(latitude, longitude)).zoom(10).build();
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
@@ -131,7 +131,8 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.yes) {
-            doBuyItem(task);
+            doBuyItem(task_id);
+            finish();
         }
         else if (view.getId() == R.id.no) {
 
