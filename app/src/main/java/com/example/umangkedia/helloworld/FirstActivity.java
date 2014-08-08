@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 public class FirstActivity extends Activity implements View.OnClickListener {
 
     private  Button mapButton;
-
+    private  String task_ids;
     private RequestQueue mRequestQueue = null;
     private final String BASE_URL = "http://mobileapi.flipkart.net/2/discover/getSearch?store=search.flipkart.com&start=0&count=10&q=";
     private final String CHECK_POSITION_URL = "http://172.17.89.113:25500/shopping_item/check";
@@ -55,7 +55,9 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         Log.d(TAG, "Activity Launched through Notification");
 
         String message = getIntent().getStringExtra("question");
-
+        task_ids = getIntent().getStringExtra("task_id");
+        String latitude = getIntent().getStringExtra("latitude");
+        String longitude = getIntent().getStringExtra("longitude");
         if (message != null) {
 
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -64,11 +66,13 @@ public class FirstActivity extends Activity implements View.OnClickListener {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
                             //Yes button clicked
-                            markCompleted();
+                            Log.d("Accepted task", task_ids);
+                            markCompleted(task_ids);
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:
                             //No button clicked, don't do anything
+                            Log.d("Rejected task", task_ids);
                             break;
                     }
                 }
@@ -82,7 +86,8 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         // Now getIntent() returns the updated Intent
     }
 
-    private void markCompleted() {
+    private void markCompleted(String task) {
+         doBuyItem(task);
     }
 
 

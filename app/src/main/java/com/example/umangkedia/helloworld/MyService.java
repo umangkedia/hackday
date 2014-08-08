@@ -51,7 +51,7 @@ public class MyService extends Service {
             @Override
             public void receiveData(String mobile_id, String task_id, String description, String latitude, String longitude, String done, String distance) {
                 Log.d("CheckPosition Request :" , mobile_id + ";" + task_id + ";" + description + ";" + latitude + ";" + longitude + ";" + done + ";" + distance);
-                showNotification(task_id,description);
+                showNotification(task_id,description,latitude,longitude);
             }
         };
         checkPositionTask.execute(CHECK_POSITION_URL + "?latitude=" + latitude + "&longitude=" + longitude);
@@ -199,11 +199,14 @@ public class MyService extends Service {
      * Show a notification while this service is running.
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private void showNotification(String task_id, String description) {
+    private void showNotification(String task_id, String description, String latitude, String longitude) {
         String msg = "Can you " + description + "?";
 
         Intent notificationIntent = new Intent(getApplicationContext(), FirstActivity.class);
         notificationIntent.putExtra("question", msg);
+        notificationIntent.putExtra("task_id", task_id);
+        notificationIntent.putExtra("latitude", latitude);
+        notificationIntent.putExtra("longitude", longitude);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
