@@ -40,6 +40,7 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_first);
         mapButton = (Button) findViewById(R.id.mapButton);
         mapButton.setOnClickListener(this);
+        startService(new Intent(FirstActivity.this, MyService.class));
     }
 
 
