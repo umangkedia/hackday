@@ -30,8 +30,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.provider.Settings.Secure;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -49,12 +56,37 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      */
     ViewPager mViewPager;
 
+    public static String description;
+    public static String lat;
+    public static String lon;
+    public static int taskID;
+
+    private static String android_id;
+
+    private final String CHECK_POSITION_URL = "http://172.17.89.113:25500/shopping_item/check";
+    private final String BUY_ITEM_URL = "http://172.17.89.113:25500//shopping_item/close";
+    private final String GET_ITEMS_URL = "http://172.17.89.113:25500//shopping_item/fetch";
+    private static final String CREATE_GEO_FENCING_URL = "http://172.17.89.113:25500//shopping_item/create";
+
+    private static void doCreateGeoFencing(String mobile_id, String task_id, String description, String latitude, String longitude){
+        CreateGeoFencingTask createGeoFencingTask = new CreateGeoFencingTask() {
+            @Override
+            public void receiveData(String message) {
+                Log.d("CreateGeoFencing", message);
+            }
+        };
+        createGeoFencingTask.execute(CREATE_GEO_FENCING_URL + "?mobile_id=" + mobile_id
+                + "&task_id=" + task_id + "&latitude=" + latitude + "&longitude=" + longitude
+                + "&description=" + description);
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        taskID = 1;
         startService(new Intent(MainActivity.this, MyService.class));
-
+        android_id = Secure.getString(getApplicationContext().getContentResolver(),
+                Secure.ANDROID_ID);
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
@@ -127,6 +159,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     // a launchpad into the other demonstrations in this example application.
                     return new LaunchpadSectionFragment();
 
+                case 1:
+                    return new ViewTaskFragment();
                 default:
                     // The other sections of the app are dummy placeholders.
                     Fragment fragment = new DummySectionFragment();
@@ -169,6 +203,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         }
                     });
 
+            rootView.findViewById(R.id.createTask)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            taskID++;
+                            doCreateGeoFencing(android_id,"task_"+taskID, description, lat, lon);
+                        }
+                    });
+
+
             // Demonstration of navigating to external activities.
 //            rootView.findViewById(R.id.demo_external_activity)
 //                    .setOnClickListener(new View.OnClickListener() {
@@ -184,9 +229,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 //                                    Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 //                            startActivity(externalActivityIntent);
 //                        }
+//                        }
 //                    });
 
             return rootView;
+        }
+    }
+
+    public static class ViewTaskFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View listRowLayoutView = inflater.inflate(R.layout.listrowlayout, container, false);
+//            super.onCreate(icicle);
+
+
+            return listRowLayoutView;
         }
     }
 
@@ -220,8 +279,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             double longitude = data.getDoubleExtra(MapActivity.LONGITUDE, 0);
 
             // Set the message string in textView
-            Log.d("Lat/Lon", String.valueOf(latitude) + String.valueOf(longitude));
-
+//            Log.d("Lat/Lon", String.valueOf(latitude) + String.valueOf(longitude));
+            lat = String.valueOf(latitude);
+            lon = String.valueOf(longitude);
 
             Toast.makeText(MainActivity.this, "Lat: " + latitude + " " + "Long: " + longitude,
                     Toast.LENGTH_LONG).show();
@@ -229,6 +289,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             EditText editText = (EditText)findViewById(R.id.latitudeLongitude);
             editText.setText(String.valueOf(latitude) + "," + String.valueOf(longitude));
 
+            EditText editDescription = (EditText)findViewById(R.id.taskDescription);
+            description = editDescription.getText().toString();
+
+
+
         }
     }
+
+
+
 }

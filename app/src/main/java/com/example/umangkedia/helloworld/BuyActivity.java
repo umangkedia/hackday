@@ -120,9 +120,9 @@ public class BuyActivity extends Activity  implements View.OnClickListener{
             @Override
             public void receiveData(String message) {
                 if ( message != null )
-                    Log.d("Final :" , message);
+                    Log.d("Buy Item :" , message);
                 else
-                    Log.d("Final :" , "null" );
+                    Log.d("Buy Item :" , "null" );
             }
         };
         buyItemTask.execute(BUY_ITEM_URL + "?task_id=" + task_id);
