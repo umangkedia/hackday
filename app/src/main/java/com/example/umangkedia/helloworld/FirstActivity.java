@@ -1,6 +1,8 @@
 package com.example.umangkedia.helloworld;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,14 +21,13 @@ import com.android.volley.toolbox.Volley;
 
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 public class FirstActivity extends Activity implements View.OnClickListener {
 
     private  Button mapButton;
-
-    private RequestQueue mRequestQueue = null;
-    private final String BASE_URL = "http://mobileapi.flipkart.net/2/discover/getSearch?store=search.flipkart.com&start=0&count=10&q=";
+    public static final String TAG = "FirstActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,44 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         mapButton = (Button) findViewById(R.id.mapButton);
         mapButton.setOnClickListener(this);
         startService(new Intent(FirstActivity.this, MyService.class));
+        onNewIntent(getIntent());
+
+    }
+
+    @Override
+    public void onNewIntent(Intent newIntent) {
+        this.setIntent(newIntent);
+        Log.d(TAG, "Activity Launched through Notification");
+
+        String message = getIntent().getStringExtra("MESSAGE");
+
+        if (message != null) {
+
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            //Yes button clicked
+                            markCompleted();
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked, don't do anything
+                            break;
+                    }
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+        }
+
+        // Now getIntent() returns the updated Intent
+    }
+
+    private void markCompleted() {
     }
 
 

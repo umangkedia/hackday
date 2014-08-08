@@ -97,18 +97,20 @@ public class MyService extends Service{
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showNotification() {
-        Intent myIntent = new Intent(getApplicationContext(), FirstActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                getApplicationContext(),
-                0,
-                myIntent,
-                Intent.FLAG_ACTIVITY_NEW_TASK);
+        String msg = "Click to see the notification";
+
+        Intent notificationIntent = new Intent(getApplicationContext(), FirstActivity.class);
+        notificationIntent.putExtra("MESSAGE", msg);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 
         Notification n  = new Notification.Builder(this)
-                .setContentTitle("New mail from " + "test@gmail.com")
-                .setContentText("Subject")
+                .setContentTitle("Task to complete")
+                .setContentText(msg)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
                 .build();
 
         notificationManager.notify(0, n);
