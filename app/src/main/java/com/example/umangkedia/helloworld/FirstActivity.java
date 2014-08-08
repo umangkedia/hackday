@@ -157,10 +157,10 @@ public class FirstActivity extends Activity implements View.OnClickListener {
         //doGetItems("mobile_id");
         //doCreateGeoFencing("mobile_id","task_id12", "description", "12.21","21.12");
 
-        /*if (view.getId() == R.id.mapButton) {
+        if (view.getId() == R.id.mapButton) {
             Intent intent = new Intent(this, MapActivity.class);
             startActivityForResult(intent, 1);
-        }*/
+        }
 
     }
 
