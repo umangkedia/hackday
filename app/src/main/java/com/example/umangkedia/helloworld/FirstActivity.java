@@ -142,8 +142,12 @@ public class FirstActivity extends Activity implements View.OnClickListener {
             double longitude = data.getDoubleExtra(MapActivity.LONGITUDE, 0);
 
             // Set the message string in textView
+            Log.d("Lat/Lon", String.valueOf(latitude) + String.valueOf(longitude));
             Toast.makeText(FirstActivity.this, "Lat: " + latitude + " "  + "Long: " + longitude,
                     Toast.LENGTH_LONG).show();
+
+            EditText editText = (EditText)findViewById(R.id.latitudeLongitude);
+            editText.setText("hello");
 
         }
     }

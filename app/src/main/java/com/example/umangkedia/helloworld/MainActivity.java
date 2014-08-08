@@ -25,10 +25,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -162,7 +165,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(getActivity(), MapActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, 1);
                         }
                     });
 
@@ -202,6 +205,30 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(
                     "hihi");
             return rootView;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == 1)
+        {
+            //fetch value from intent
+            double latitude = data.getDoubleExtra(MapActivity.LATITUDE, 0);
+            double longitude = data.getDoubleExtra(MapActivity.LONGITUDE, 0);
+
+            // Set the message string in textView
+            Log.d("Lat/Lon", String.valueOf(latitude) + String.valueOf(longitude));
+
+
+            Toast.makeText(MainActivity.this, "Lat: " + latitude + " " + "Long: " + longitude,
+                    Toast.LENGTH_LONG).show();
+
+            EditText editText = (EditText)findViewById(R.id.latitudeLongitude);
+            editText.setText(String.valueOf(latitude) + "," + String.valueOf(longitude));
+
         }
     }
 }
