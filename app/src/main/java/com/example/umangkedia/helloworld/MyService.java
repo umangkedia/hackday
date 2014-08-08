@@ -46,16 +46,6 @@ public class MyService extends Service {
     double latitude = 0;
     double longitude = 0;
 
-    private void doCheckPositionRequest(String latitude, String longitude){
-        CheckPositionTask checkPositionTask = new CheckPositionTask() {
-            @Override
-            public void receiveData(String mobile_id, String task_id, String description, String latitude, String longitude, String done, String distance) {
-                Log.d("CheckPosition Request :" , mobile_id + ";" + task_id + ";" + description + ";" + latitude + ";" + longitude + ";" + done + ";" + distance);
-                showNotification(task_id,description,latitude,longitude);
-            }
-        };
-        checkPositionTask.execute(CHECK_POSITION_URL + "?latitude=" + latitude + "&longitude=" + longitude);
-    }
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -103,6 +93,18 @@ public class MyService extends Service {
         }
         return super.onStartCommand(intent, flags, startId);
     }
+
+    private void doCheckPositionRequest(String latitude, String longitude){
+        CheckPositionTask checkPositionTask = new CheckPositionTask() {
+            @Override
+            public void receiveData(String mobile_id, String task_id, String description, String latitude, String longitude, String done, String distance) {
+                Log.d("CheckPosition Request :" , mobile_id + ";" + task_id + ";" + description + ";" + latitude + ";" + longitude + ";" + done + ";" + distance);
+                showNotification(task_id,description,latitude,longitude);
+            }
+        };
+        checkPositionTask.execute(CHECK_POSITION_URL + "?latitude=" + latitude + "&longitude=" + longitude);
+    }
+
 
     private Location getBestLocation() {
         Location gpslocation = null;
