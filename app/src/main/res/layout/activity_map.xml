@@ -14,31 +14,40 @@
         android:orientation="horizontal">
 
         <EditText
-            android:layout_width="200px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/searchText"
             android:layout_weight="1" />
 
 
         <Button
-            android:layout_width="200px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Search"
             android:id="@+id/searchLocation"/>
     </LinearLayout>
 
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="800px"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Set Location"
-        android:id="@+id/setLocation"
-        android:layout_gravity="center_horizontal" />
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:text="Set Location"
+            android:id="@+id/setLocation"
+            android:layout_gravity="center_horizontal" />
+
+
+    </LinearLayout>
 
 </LinearLayout>

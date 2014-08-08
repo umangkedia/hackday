@@ -134,7 +134,7 @@ public class MyService extends Service {
         public void run(){
 
             Location tempLoc = getBestLocation();
-            Log.d(TAG, String.valueOf(tempLoc.getLatitude() + String.valueOf(tempLoc.getLongitude())));
+//            Log.d(TAG, String.valueOf(tempLoc.getLatitude() + String.valueOf(tempLoc.getLongitude())));
 
             if(tempLoc!=null)
                 curLocation = tempLoc;
