@@ -11,17 +11,28 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
+import android.os.Message;
 import android.util.Log;
 
-public class MyService extends Service{
+public class MyService extends Service {
 
+    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 10 ;
     private static String TAG = "MyService";
     private MyThread mythread;
     public boolean isRunning = false;
     NotificationManager notificationManager;
+    private LocationManager locationManager;
+    Location location;
+    public Handler handler;
+
+    double latitude = 0;
+    double longitude = 0;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -34,6 +45,13 @@ public class MyService extends Service{
         Log.d(TAG, "onCreate");
         notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         showNotification();
+
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                location = getLocation();
+            }
+        };
 
         mythread  = new MyThread();
     }
@@ -56,6 +74,36 @@ public class MyService extends Service{
             isRunning = true;
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    public Location getLocation() {
+        try {
+            locListener locList = new locListener();
+            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            // getting GPS status
+            boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            // if GPS Enabled get lat/long using GPS Services
+            if (isGPSEnabled) {
+                if (location == null) {
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            40000,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, locList);
+
+                    if (locationManager != null) {
+                        location = locationManager
+                                .getLastKnownLocation (LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return location;
     }
 
     public void readWebPage(){
@@ -115,5 +163,4 @@ public class MyService extends Service{
 
         notificationManager.notify(0, n);
     }
-
 }
